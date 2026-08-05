@@ -1,0 +1,37 @@
+# =============================================================================
+# Generated outputs — regenerate by running the pipeline. Too heavy for git
+# (COGs are tens of MB each, the Zarr datacube is ~320 MB, KML overlays 10-17 MB).
+# =============================================================================
+products/
+kml/
+merge/
+
+# --- GMTSAR / GMT working data (never commit raw SAR or intermediates) -------
+raw/
+topo/
+SLC/
+intf/
+*.grd
+*.SLC
+*.PRM
+*.LED
+*.tiff
+
+# --- Python ------------------------------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+
+# --- Local per-experiment config (copied from config.template) ---------------
+config.env
+
+# --- OS / editor junk --------------------------------------------------------
+.DS_Store
+._*
+*.swp
+
+# --- Logs --------------------------------------------------------------------
+*.log
+
+# Keep the showcase figure even though other example outputs are ignored
+!examples/nicaragua_2018/contact_sheet.png

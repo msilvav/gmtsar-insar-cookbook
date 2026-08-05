@@ -1,0 +1,45 @@
+# =============================================================================
+# config.template — Parametros del cookbook. Copia a  config.env  y editalo; luego:
+#     source config.env       # ANTES de correr run.sh / unwrap.sh / deramp.sh / export_products.sh
+# Cada variable va `export`ada para que la hereden los scripts (que corren como procesos hijos).
+# Al lado de cada una: QUE script la consume. (Si no aparece un script, esa var no la lee nadie.)
+# =============================================================================
+
+# --- Identidad (solo etiquetas, no afectan el procesamiento) -----------------
+EXP_NAME="nicaragua_2018"
+AOI_DESC="Arco volcanico del Pacifico, Nicaragua"
+
+# --- Par interferometrico Sentinel-1 SLC (IW, VV)  [consumido por run.sh] ----
+export M_SAFE="/ruta/a/S1A_..._20180317..._.SAFE"     # master  SAFE
+export M_EOF="/ruta/a/S1A_OPER_AUX_POEORB_..._20180317....EOF"   # master  orbita POEORB
+export A_SAFE="/ruta/a/S1A_..._20180329..._.SAFE"     # aligned SAFE
+export A_EOF="/ruta/a/S1A_OPER_AUX_POEORB_..._20180329....EOF"   # aligned orbita POEORB
+export POL="vv"                       # polarizacion (vv para 1SDV)
+
+# --- Fechas  [consumido por export_products.sh -> run_metadata.json] ---------
+export M_DATE="2018-03-17"            # fecha master
+export S_DATE="2018-03-29"            # fecha aligned
+
+# --- Desenrollado SNAPHU  [consumido por unwrap.sh] --------------------------
+export THRESH="0.1"                   # threshold de coherencia (0 = no desenrolla)
+export DEFOMAX="0"                    # 0 = continuo/interseismico ; >0 solo rupturas
+export TGEO="0.10"                    # threshold_geocode (mascara final por coherencia)
+export SNAPHU_MODE="plain"            # plain=snaphu.csh (recomendado) | interp=snaphu_interp.csh
+                                      #   interp rellena NaN con nearest_grid: con >40% NaN SE CUELGA.
+
+# --- Deramp (fase 3)  [consumido por deramp.sh] ------------------------------
+export NMODEL="3"                     # grdtrend -N3 = plano (mean + x + y); +r robusto lo agrega el script
+
+# --- Fisica / salidas  [export_products.sh y datacube.py] --------------------
+export WAVELENGTH="0.0554658"         # export_products.sh (metadata; m, banda C S1)
+export OUT_CRS="EPSG:4326"            # export_products.sh (-a_srs del COG; canonico)
+export UTM_EPSG="32616"               # export_products.sh (hint) + `datacube.py --epsg` (UTM 16N, S2)
+
+# --- Rutas (opcional) --------------------------------------------------------
+# Por defecto unwrap.sh/deramp.sh usan  <carpeta del script>/merge . Descomenta para forzar:
+# export MERGE_DIR="/ruta/a/proc/<exp>/merge"
+
+# --- Entorno -----------------------------------------------------------------
+export GMTSAR="/usr/local/GMTSAR"
+export LC_ALL="C"                     # CRITICO: sin esto GMTSAR rompe con locale es_ES
+export PY="/home/manuel/miniconda3/envs/geoai/bin/python"   # env con rioxarray/rasterio

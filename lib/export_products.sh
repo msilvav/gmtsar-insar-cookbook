@@ -57,9 +57,21 @@ for row in "${PRODUCTS[@]}"; do
   if [ ! -f "$src" ]; then echo "  -- $name: falta $grd (omito)"; continue; fi
   tmp="$OUT/cog/.${name}_tmp.tif"; cog="$OUT/cog/${name}.tif"
   rm -f "$tmp" "$cog"
+  # Normalizar longitud a [-180,180] si viene "envuelta" (hemisferio este: GMTSAR geocodifica
+  # con lon-360; p.ej. Grecia -339 = 21E-360). El COG/datacube deben salir en la convencion
+  # estandar para interoperar y fusionar con Sentinel-2. Solo cambia la ETIQUETA, no los valores.
+  src_use="$src"; nshift=0
+  nx0=$(gmt grdinfo -C "$src" | awk '{print $2}'); nx1=$(gmt grdinfo -C "$src" | awk '{print $3}')
+  awk -v a="$nx0" 'BEGIN{exit !(a < -180)}' && nshift=360
+  awk -v a="$nx1" 'BEGIN{exit !(a >  180)}' && nshift=-360
+  if [ "$nshift" != 0 ]; then
+    src_use="$OUT/cog/.${name}_norm.grd"; cp "$src" "$src_use"
+    read -r a0 a1 a2 a3 <<< "$(gmt grdinfo -C "$src_use" | awk '{print $2,$3,$4,$5}')"
+    gmt grdedit "$src_use" -R"$(awk -v v=$a0 -v s=$nshift 'BEGIN{print v+s}')"/"$(awk -v v=$a1 -v s=$nshift 'BEGIN{print v+s}')"/"$a2"/"$a3" 2>/dev/null
+  fi
   # grd (GMT) -> GeoTIFF -> COG (GDAL). Verificar CADA paso; sin verificacion el COG
   # podia quedar ausente y el script reportar OK igual.
-  if ! gmt grdconvert "$src" "${tmp}=gd:GTiff" 2>/dev/null || [ ! -s "$tmp" ]; then
+  if ! gmt grdconvert "$src_use" "${tmp}=gd:GTiff" 2>/dev/null || [ ! -s "$tmp" ]; then
     echo "  !! $name: gmt grdconvert FALLO (no se genero $grd.tif)"; failed=1; rm -f "$tmp"; continue
   fi
   if ! gdal_translate -q -of COG -a_srs "$OUT_CRS" -a_nodata nan \
@@ -67,7 +79,8 @@ for row in "${PRODUCTS[@]}"; do
     echo "  !! $name: gdal_translate/COG FALLO"; failed=1; rm -f "$tmp" "$cog"; continue
   fi
   rm -f "$tmp"
-  read -r xmin xmax ymin ymax zmin zmax <<< "$(gmt grdinfo -C "$src" | awk '{print $2,$3,$4,$5,$6,$7}')"
+  read -r xmin xmax ymin ymax zmin zmax <<< "$(gmt grdinfo -C "$src_use" | awk '{print $2,$3,$4,$5,$6,$7}')"
+  [ "$nshift" != 0 ] && rm -f "$src_use"
   cat > "$OUT/cog/${name}.json" <<JSON
 {
   "product": "$name",

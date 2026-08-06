@@ -1,81 +1,79 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 520" font-family="Helvetica,Arial,sans-serif">
-  <rect x="0" y="0" width="980" height="520" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" font-family="'Segoe UI',Helvetica,Arial,sans-serif">
   <defs>
-    <marker id="ar--" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#475569"/>
-    </marker>
-    <marker id="arX" markerWidth="11" markerHeight="11" refX="9" refY="3.5" orient="auto">
-      <path d="M0,0 L9,3.5 L0,7 Z" fill="#b45309"/>
-    </marker>
+    <filter id="sh" x="-8%" y="-8%" width="116%" height="128%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.6" flood-color="#0f172a" flood-opacity="0.13"/>
+    </filter>
+    <marker id="mg" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#94a3b8"/></marker>
+    <marker id="ma" markerWidth="10" markerHeight="10" refX="8" refY="3.2" orient="auto"><path d="M0,0 L8,3.2 L0,6.4 Z" fill="#d97706"/></marker>
+    <marker id="mb" markerWidth="10" markerHeight="10" refX="8" refY="3.2" orient="auto"><path d="M0,0 L8,3.2 L0,6.4 Z" fill="#2563eb"/></marker>
   </defs>
 
-  <text x="490" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#0f172a">InSAR: dos sistemas de coordenadas — dónde entran topo_ra, las órbitas y el deramp</text>
+  <rect x="0" y="0" width="1000" height="520" fill="#ffffff"/>
+  <text x="500" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#0f172a">Los dos mundos de coordenadas del InSAR</text>
+  <text x="500" y="55" text-anchor="middle" font-size="13" fill="#64748b">dónde entran topo_ra, las órbitas y el deramp</text>
 
-  <!-- LANE: geographic -->
-  <rect x="20" y="52" width="940" height="150" rx="10" fill="#e8f0fe" stroke="#bfdbfe"/>
-  <text x="34" y="74" font-size="14" font-weight="bold" fill="#1d4ed8">MUNDO GEOGRÁFICO — (lon, lat)</text>
-  <text x="34" y="92" font-size="12" fill="#3b5bdb">donde se entregan los productos y se hace fusión con Sentinel-2</text>
+  <!-- bands -->
+  <rect x="24" y="74" width="952" height="140" rx="14" fill="#eff6ff"/>
+  <text x="44" y="99" font-size="14" font-weight="700" fill="#1d4ed8">GEOGRÁFICO · lon, lat</text>
+  <text x="44" y="116" font-size="11.5" fill="#3b82f6">productos y fusión con Sentinel-2</text>
 
-  <!-- LANE: radar -->
-  <rect x="20" y="318" width="940" height="182" rx="10" fill="#fff4e6" stroke="#fed7aa"/>
-  <text x="34" y="340" font-size="14" font-weight="bold" fill="#c2410c">MUNDO RADAR — (range = distancia satélite→suelo, azimut = a lo largo de la órbita)</text>
+  <rect x="24" y="326" width="952" height="168" rx="14" fill="#fff7ed"/>
+  <text x="44" y="351" font-size="14" font-weight="700" fill="#ea580c">RADAR · range, azimut</text>
+  <text x="44" y="368" font-size="11.5" fill="#f97316">el sistema natural del dato</text>
 
-  <!-- GEO boxes -->
-  <g font-size="13" fill="#0f172a">
-    <rect x="48" y="112" width="150" height="60" rx="8" fill="#ffffff" stroke="#64748b"/>
-    <text x="123" y="138" text-anchor="middle" font-weight="bold">DEM (dem.grd)</text>
-    <text x="123" y="156" text-anchor="middle" font-size="11" fill="#475569">elevación del terreno</text>
+  <!-- geo boxes -->
+  <g>
+    <rect x="60" y="118" width="164" height="62" rx="10" fill="#ffffff" stroke="#cbd5e1" filter="url(#sh)"/>
+    <text x="142" y="145" text-anchor="middle" font-size="14" font-weight="600" fill="#1e293b">DEM</text>
+    <text x="142" y="163" text-anchor="middle" font-size="11.5" fill="#64748b">elevación (dem.grd)</text>
 
-    <rect x="760" y="108" width="182" height="68" rx="8" fill="#ffffff" stroke="#1d4ed8" stroke-width="2"/>
-    <text x="851" y="132" text-anchor="middle" font-weight="bold">LOS geocodificado</text>
-    <text x="851" y="150" text-anchor="middle" font-size="11" fill="#475569">los_ll.grd → COG / Zarr</text>
-    <text x="851" y="165" text-anchor="middle" font-size="11" fill="#475569">(el PRODUCTO)</text>
+    <rect x="784" y="114" width="180" height="70" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2" filter="url(#sh)"/>
+    <text x="874" y="140" text-anchor="middle" font-size="14" font-weight="700" fill="#1e293b">LOS geocodificado</text>
+    <text x="874" y="158" text-anchor="middle" font-size="11.5" fill="#64748b">el PRODUCTO</text>
+    <text x="874" y="173" text-anchor="middle" font-size="11" fill="#94a3b8">los_ll.grd → COG / Zarr</text>
   </g>
 
-  <!-- RADAR boxes -->
-  <g font-size="13" fill="#0f172a">
-    <rect x="48" y="392" width="150" height="60" rx="8" fill="#ffffff" stroke="#64748b"/>
-    <text x="123" y="416" text-anchor="middle" font-weight="bold">SLC maestra</text>
-    <text x="123" y="434" text-anchor="middle" font-weight="bold">+ SLC alineada</text>
+  <!-- topo_ra bridge -->
+  <rect x="290" y="256" width="164" height="56" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="2" filter="url(#sh)"/>
+  <text x="372" y="280" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">topo_ra</text>
+  <text x="372" y="297" text-anchor="middle" font-size="11.5" fill="#b45309">el DEM en geometría radar</text>
 
-    <rect x="262" y="392" width="158" height="60" rx="8" fill="#ffffff" stroke="#64748b"/>
-    <text x="341" y="416" text-anchor="middle" font-weight="bold">Interferograma</text>
-    <text x="341" y="434" text-anchor="middle" font-size="11" fill="#475569">(fase envuelta)</text>
+  <!-- radar boxes -->
+  <g>
+    <rect x="60" y="398" width="164" height="62" rx="10" fill="#ffffff" stroke="#cbd5e1" filter="url(#sh)"/>
+    <text x="142" y="424" text-anchor="middle" font-size="14" font-weight="600" fill="#1e293b">SLC × 2</text>
+    <text x="142" y="442" text-anchor="middle" font-size="11.5" fill="#64748b">maestra + alineada</text>
 
-    <rect x="500" y="392" width="200" height="60" rx="8" fill="#ffffff" stroke="#64748b"/>
-    <text x="600" y="416" text-anchor="middle" font-weight="bold">Desenrollado (SNAPHU)</text>
-    <text x="600" y="434" text-anchor="middle" font-size="11" fill="#475569">→ LOS en range/azimut</text>
+    <rect x="290" y="398" width="164" height="62" rx="10" fill="#ffffff" stroke="#cbd5e1" filter="url(#sh)"/>
+    <text x="372" y="424" text-anchor="middle" font-size="14" font-weight="600" fill="#1e293b">Interferograma</text>
+    <text x="372" y="442" text-anchor="middle" font-size="11.5" fill="#64748b">fase envuelta</text>
 
-    <!-- topo_ra: sits at the geo→radar boundary, emphasized -->
-    <rect x="262" y="250" width="158" height="52" rx="8" fill="#fef9c3" stroke="#b45309" stroke-width="2"/>
-    <text x="341" y="272" text-anchor="middle" font-weight="bold">topo_ra</text>
-    <text x="341" y="289" text-anchor="middle" font-size="11" fill="#92400e">DEM en geometría radar</text>
+    <rect x="520" y="398" width="196" height="62" rx="10" fill="#ffffff" stroke="#cbd5e1" filter="url(#sh)"/>
+    <text x="618" y="424" text-anchor="middle" font-size="14" font-weight="600" fill="#1e293b">Desenrollado (SNAPHU)</text>
+    <text x="618" y="442" text-anchor="middle" font-size="11.5" fill="#64748b">→ LOS en range/azimut</text>
   </g>
 
-  <!-- ARROWS -->
-  <!-- DEM -> topo_ra (geo to radar transform) -->
-  <path d="M123,172 L123,226 L262,262" fill="none" stroke="#b45309" stroke-width="2" marker-end="url(#arX)"/>
-  <text x="128" y="200" font-size="12" font-weight="bold" fill="#b45309">① SAT_llt2rat</text>
-  <text x="128" y="216" font-size="11" fill="#b45309">usa la ÓRBITA (POEORB)</text>
+  <!-- arrows -->
+  <!-- DEM -> topo_ra -->
+  <path d="M142,180 L142,232 L372,232 L372,256" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#ma)"/>
+  <text x="152" y="212" font-size="12" font-weight="600" fill="#b45309">SAT_llt2rat · usa la órbita</text>
 
-  <!-- topo_ra -> interferograma (subtract topo phase) -->
-  <path d="M341,302 L341,392" fill="none" stroke="#475569" stroke-width="1.6" marker-end="url(#ar--)"/>
-  <text x="350" y="352" font-size="11" fill="#334155">② se RESTA la</text>
-  <text x="350" y="366" font-size="11" fill="#334155">fase de la topografía</text>
+  <!-- topo_ra -> interferograma -->
+  <path d="M372,312 L372,398" fill="none" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#mg)"/>
+  <text x="382" y="360" font-size="11.5" fill="#475569">resta la topografía</text>
 
-  <!-- SLC -> interferograma -->
-  <path d="M198,422 L262,422" fill="none" stroke="#475569" stroke-width="1.6" marker-end="url(#ar--)"/>
+  <!-- SLC -> interf -->
+  <path d="M224,429 L290,429" fill="none" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#mg)"/>
+  <!-- interf -> desenrollado -->
+  <path d="M454,429 L520,429" fill="none" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#mg)"/>
+  <text x="464" y="421" font-size="11" fill="#475569">SNAPHU</text>
 
-  <!-- interferograma -> desenrollado -->
-  <path d="M420,422 L500,422" fill="none" stroke="#475569" stroke-width="1.6" marker-end="url(#ar--)"/>
-  <text x="428" y="414" font-size="11" fill="#334155">SNAPHU</text>
+  <!-- desenrollado -> LOS geocod -->
+  <path d="M716,414 L750,414 L750,149 L784,149" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#mb)"/>
+  <text x="760" y="252" font-size="12" font-weight="600" fill="#1d4ed8">proj_ra2ll</text>
+  <text x="760" y="268" font-size="11.5" fill="#3b82f6">(trans.dat)</text>
 
-  <!-- desenrollado -> LOS geocod (radar to geo transform) -->
-  <path d="M700,410 L730,410 L730,142 L760,142" fill="none" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arX)"/>
-  <text x="612" y="360" font-size="12" font-weight="bold" fill="#1d4ed8">③ proj_ra2ll (trans.dat)</text>
-  <text x="612" y="376" font-size="11" fill="#1d4ed8">de radar a lon/lat</text>
-
-  <!-- deramp annotation on desenrollado -->
-  <path d="M600,452 L600,468" fill="none" stroke="#94a3b8" stroke-width="1.4"/>
-  <text x="600" y="480" text-anchor="middle" font-size="11" fill="#64748b">luego: deramp = quita la rampa orbital (ajuste de plano robusto)</text>
+  <!-- deramp note -->
+  <path d="M618,460 L618,474" fill="none" stroke="#cbd5e1" stroke-width="1.4"/>
+  <text x="618" y="487" text-anchor="middle" font-size="11.5" fill="#64748b">luego, el deramp quita la rampa orbital (ajuste de plano)</text>
 </svg>

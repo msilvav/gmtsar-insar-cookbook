@@ -127,7 +127,55 @@ La fusión InSAR × óptico **no está ejecutada** — está *lista para enchufa
 
 ---
 
-## 5. Glosario mínimo
+## 5. Dos sistemas de coordenadas — topo_ra, órbitas y deramp
+
+![Los dos sistemas de coordenadas y dónde entra topo_ra](docs/coordenadas_insar.svg)
+
+El procesamiento se mueve entre **dos sistemas de coordenadas**, y conviene tenerlo claro:
+
+- **Radar** (*range* = distancia satélite→suelo; *azimut* = a lo largo de la órbita): el sistema
+  natural del dato. Ahí viven la SLC, el interferograma y el desenrollado.
+- **Geográfico** (lon, lat): donde se entregan los productos (LOS, coherencia) para mirarlos y hacer
+  ciencia de datos.
+
+Tres conceptos que suelen costar, ubicados en ese flujo:
+
+### topo_ra — el puente de geográfico a radar
+El DEM (`dem.grd`) está en lon/lat, pero el interferograma vive en geometría radar. Para restar la
+contribución de la **topografía** a la fase, hace falta la elevación *en la grilla del radar*.
+`dem2topo_ra.csh` proyecta cada punto del DEM a (range, azimut) con `SAT_llt2rat` —que usa la órbita— y
+lo resamplea con `gmt surface` → `topo_ra.grd`. Con eso GMTSAR calcula la fase topográfica esperada y la
+resta (parámetro `topo_phase = 1`). La misma geometría (`trans.dat`) se reutiliza al final para
+**geocodificar** (`proj_ra2ll`, de radar a lon/lat).
+
+### Órbitas POEORB — dónde estaba el satélite
+Para convertir fase en geometría, GMTSAR necesita la posición precisa del satélite en cada instante: la
+**órbita**. Sentinel-1 publica archivos `.EOF` de precisión creciente:
+
+- **RESORB** (restituida): lista pocas horas después de la toma; precisión moderada.
+- **POEORB** (*Precise Orbit Ephemerides*, efemérides orbitales precisas): lista ~20 días después;
+  precisión de centímetros — la mejor.
+
+Órbitas imprecisas producen (a) errores de *baseline* → fase topográfica mal removida, y (b) una
+**rampa** en el interferograma. Regla práctica: usar **POEORB** siempre que exista (≥20 días tras la
+toma). En el ejemplo de Nicaragua una órbita RESORB rompió el cálculo de baseline; con POEORB funcionó.
+
+### Deramp — quitar la rampa orbital
+Después de desenrollar, el LOS todavía tiene un basculamiento suave de gran escala en toda la escena: la
+**rampa**. Viene sobre todo de pequeños errores de órbita, que producen una fase casi lineal (un plano
+inclinado). Como una rampa es, a primer orden, un plano `a·x + b·y + c`, se elimina **ajustando un plano
+al LOS y restándolo**: `gmt grdtrend -N3+r` (`N3` = plano: constante + pendiente en x + pendiente en y;
+`+r` = robusto, ignora valores extremos para que una señal localizada no sesgue el ajuste). Queda
+`los_detrend`, con la señal de longitud de onda más corta (deformación localizada, si la hay, + atmósfera).
+
+**Cuidado:** el ajuste quita *cualquier* gradiente lineal. Si la deformación real fuera de gran escala y
+casi lineal, el deramp también la removería. Es seguro en AOIs chicas o cuando no se espera señal de gran
+escala. En Grecia el deramp casi no cambió σ (13.8→13.7 mm): con POEORB no había rampa apreciable, y el
+residual es atmósfera troposférica.
+
+---
+
+## 6. Glosario mínimo
 
 - **SLC** — imagen radar compleja (amplitud + fase), sin proyectar.
 - **Interferograma** — diferencia de fase entre dos SLC; codifica topografía + desplazamiento + atmósfera + ruido.
@@ -136,13 +184,15 @@ La fusión InSAR × óptico **no está ejecutada** — está *lista para enchufa
   (SNAPHU) reconstruye los ciclos enteros para tener una fase continua.
 - **LOS** (Line‑Of‑Sight) — desplazamiento proyectado en la línea de visado del satélite. **No es
   vertical**: el radar mira de costado. `los_mm = fase · (−λ/4π) · 1000`.
-- **Rampa** — gradiente suave de fase por error de órbita; se quita con un plano (`grdtrend`).
+- **Rampa** — gradiente suave de fase por error de órbita; se quita con un plano (`grdtrend`). Ver §5.
+- **topo_ra** — el DEM reproyectado a la geometría radar (range/azimut); permite restar la fase de la topografía (§5).
+- **Órbitas RESORB / POEORB** — archivos `.EOF` con la posición del satélite; POEORB (precisas, ~20 d después) son las mejores (§5).
 - **Baseline temporal / perpendicular** — separación en tiempo / en posición entre las dos órbitas.
 - **SBAS / stacking** — combinar **muchos** interferogramas para promediar la atmósfera y medir deformación.
 
 ---
 
-## 6. Caveats honestos (leer antes de interpretar)
+## 7. Caveats honestos (leer antes de interpretar)
 
 - **Un solo par ≠ mapa de deformación.** En un interferograma aislado la señal está dominada por
   **atmósfera troposférica** (ver el ejemplo: tras quitar la rampa quedan ~16 mm de σ que son
@@ -160,7 +210,7 @@ La fusión InSAR × óptico **no está ejecutada** — está *lista para enchufa
 
 ---
 
-## 7. Ejemplo resuelto: `examples/nicaragua_2018/`
+## 8. Ejemplo resuelto: `examples/nicaragua_2018/`
 
 Par S1A **2018‑03‑17 / 03‑29** (12 días), arco volcánico de Nicaragua, 3 subswaths + merge.
 Dataset oficial de prueba de GMTSAR. Productos en `products/` (6 COG + metadata + `datacube.zarr`).

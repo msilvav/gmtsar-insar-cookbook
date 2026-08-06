@@ -70,14 +70,15 @@ cookbook/
 │   ├── export_products.sh     grd → COG + sidecar/provenance JSON
 │   └── datacube.py            stack COGs → xarray/Zarr cube (+ Sentinel-2 hook)
 └── examples/
-    └── nicaragua_2018/    ← a fully worked example (S1A, 2018-03-17 / 03-29)
-        ├── run.sh             ① align + interferogram + merge
-        ├── unwrap.sh          ② SNAPHU unwrap + geocode
-        ├── deramp.sh          ③ remove the orbital ramp
-        ├── config.s1a.txt     GMTSAR processing config for this pair
-        ├── quicklook_*.py     quick PNG previews
-        ├── contact_sheet.py   the summary figure above
-        └── contact_sheet.png  showcase (other outputs are regenerated, not committed)
+    ├── nicaragua_2018/    ← worked example #1 (S1A, 2018-03-17 / 03-29, volcanic arc)
+    │   ├── run.sh             ① align + interferogram + merge
+    │   ├── unwrap.sh          ② SNAPHU unwrap + geocode
+    │   ├── deramp.sh          ③ remove the orbital ramp
+    │   ├── config.s1a.txt     GMTSAR processing config for this pair
+    │   ├── quicklook_*.py     quick PNG previews
+    │   └── contact_sheet.png  showcase (other outputs are regenerated, not committed)
+    └── greece_2015/       ← worked example #2 (S1A, 2015-11-05 / 2015-11-17, Gulf of Corinth)
+        └── …                  same parametrized scripts, different config.env (see its README)
 ```
 
 > The heavy generated outputs (COGs, the `datacube.zarr`, KML overlays) are **git-ignored** on
@@ -142,6 +143,11 @@ Sentinel-1A pair **2018-03-17 / 03-29** (12 days) over the Nicaraguan volcanic a
 merged — GMTSAR's official S1 test scene. The unwrapping is clean and shows **no localized
 deformation** (correct for a quiet pair); the post-deramp residual is **mostly tropospheric
 atmosphere**. It validates the pipeline end-to-end.
+
+A **second example**, [`examples/greece_2015/`](examples/greece_2015) (Gulf of Corinth, 2015),
+runs the **same parametrized scripts** with only a different `config.env` — demonstrating the
+"one recipe, many scenes" design, and exercising an eastern-hemisphere scene (see its README for
+the longitude-wrap note and the single-core SNAPHU timing).
 
 ---
 

@@ -219,6 +219,7 @@ if __name__ == "__main__":
     if a.utm:
         ds = to_utm(ds, a.epsg); print(f"-> reproyectado a UTM (EPSG:{a.epsg})")
     ext = "zarr" if a.format == "zarr" else "nc"
-    out = a.out or os.path.join(a.products_dir, f"datacube.{ext}")
+    suffix = "_utm" if a.utm else ""      # --utm no debe pisar el cubo EPSG:4326 (misma ruta)
+    out = a.out or os.path.join(a.products_dir, f"datacube{suffix}.{ext}")
     save(ds, out, fmt=a.format)
     print("Guardado ->", out, f"({a.format})")

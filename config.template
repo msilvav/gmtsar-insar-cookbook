@@ -5,9 +5,9 @@
 # Al lado de cada una: QUE script la consume. (Si no aparece un script, esa var no la lee nadie.)
 # =============================================================================
 
-# --- Identidad (solo etiquetas, no afectan el procesamiento) -----------------
-EXP_NAME="nicaragua_2018"
-AOI_DESC="Arco volcanico del Pacifico, Nicaragua"
+# --- Identidad ---------------------------------------------------------------
+export EXP_NAME="nicaragua_2018"      # etiqueta (no afecta el procesamiento)
+export AOI_DESC="Nicaragua"           # quicklook_*.py: titulo del grafico
 
 # --- Par interferometrico Sentinel-1 SLC (IW, VV)  [consumido por run.sh] ----
 export M_SAFE="/ruta/a/S1A_..._20180317..._.SAFE"     # master  SAFE
@@ -15,6 +15,8 @@ export M_EOF="/ruta/a/S1A_OPER_AUX_POEORB_..._20180317....EOF"   # master  orbit
 export A_SAFE="/ruta/a/S1A_..._20180329..._.SAFE"     # aligned SAFE
 export A_EOF="/ruta/a/S1A_OPER_AUX_POEORB_..._20180329....EOF"   # aligned orbita POEORB
 export POL="vv"                       # polarizacion (vv para 1SDV)
+export CONFIG="config.s1a.txt"        # run.sh: nombre del config GMTSAR (ej. Grecia usa "config.txt")
+export PARALLEL="0"                    # run.sh: 0 = 3 subswaths secuenciales ; 1 = en paralelo (mas RAM/CPU)
 
 # --- Fechas  [consumido por export_products.sh -> run_metadata.json] ---------
 export M_DATE="2018-03-17"            # fecha master
